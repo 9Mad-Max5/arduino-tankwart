@@ -1,6 +1,6 @@
 const int analogPin = A0;    // Analoger Pin für die Spannungsmessung
-const int thresholdLow = 100;  // Schwelle für niedrige Spannung
-const int thresholdHigh = 300; // Schwelle für hohe Spannung
+const int thresholdLow = 60;  // Schwelle für niedrige Spannung
+const int thresholdHigh = 200; // Schwelle für hohe Spannung
 const int outputPin = 13;     // Ausgangspin zum Schalten
 
 void setup() {
