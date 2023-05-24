@@ -10,6 +10,7 @@ const int maxOnTime = 12000;      // Maximale Einschaltdauer in Millisekunden (1
 const int cooldownTime = 60000;   // Cool-Down-Zeit in Millisekunden (60 Sekunden)
 
 unsigned long lastActivationTime = 0;  // Zeitpunkt der letzten Aktivierung des Ausgangs
+bool inCooldown = false;                // Gibt an, ob sich der Ausgang im Cool-Down-Zeitraum befindet
 
 void setup() {
   pinMode(outputPin, OUTPUT);          // Output-Pin festlegen
@@ -34,7 +35,7 @@ void loop() {
   Da es schlimmer ist wenn es überläuft wie das es nicht pumpt nehmen wir bei Abriss == Voll
   */
 
-  if ((sensorValue < thresholdLow && !isOutputActive()) || (lowerSensorValue == HIGH && !isOutputActive())) {
+  if ((sensorValue < thresholdLow && !isOutputActive() && !inCooldown) || (lowerSensorValue == HIGH && !isOutputActive() && !inCooldown)) {
     activateOutput();
   } else if (sensorValue > thresholdHigh || upperSensorValue == LOW) {
     deactivateOutput();
@@ -55,11 +56,12 @@ void activateOutput() {
     digitalWrite(outputPin, LOW);    // Ausgang einschalten
     lastActivationTime = currentTime; // Zeitpunkt der Aktivierung aktualisieren
     delay(maxOnTime);                  // Maximale Einschaltdauer abwarten
-    digitalWrite(outputPin, HIGH);     // Ausgang ausschalten
+    digitalWrite(outputPin, HIGH);    // Ausgang ausschalten (umgekehrte Logik)
+    inCooldown = true;                 // Cool-Down-Modus aktivieren
   }
 }
 
 void deactivateOutput() {
-  digitalWrite(outputPin, HIGH);   // Ausgang ausschalten
+  digitalWrite(outputPin, HIGH);   // Ausgang ausschalten (umgekehrte Logik)
+  inCooldown = false;               // Cool-Down-Modus deaktivieren
 }
-
